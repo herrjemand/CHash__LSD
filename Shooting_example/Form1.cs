@@ -19,30 +19,48 @@ namespace LSD
         List<Bonus> bonus = new List<Bonus>();//Bonus list
         Triangle trinity = new Triangle(); //Declare user unit
         Menu_Ell[] menus_ell = new Menu_Ell[3], levels_ell = new Menu_Ell[5]; //Declares menu items
-        private short npr, ncr, pad, pad_real, circle_level_r = 100, main_radius = 0, tfow, menu_height = 40, speeed = 20, c_level_score,c_size;
-        private double grad;//50% gradient
+        ///<variables>
+        /// mnpr: Maximum number per row y = n(h+p) + p
+        /// lcn: level cube numbers //depends on leve and other factors
+        /// pad: Theoretical minimum padding
+        /// pad_real: Actual padding
+        /// circle_level_r: Circle Level radius
+        /// main_radius:1/4 of height
+        /// tfow: three fourth of width
+        /// menu_height: height of top menu
+        /// speed: speed of cubes
+        /// c_level_score: Current level score
+        /// c_size: 5% of screen size
+        /// 
+        /// grad: 50% gradient of screen; Used in bonus: y=mx+c
+        /// 
+        /// name: Name variable
+        /// 
+        /// testing: cube for calculations
+        /// </variables>
+        private short mnpr, lcn, pad, pad_real, circle_level_r = 100, main_radius = 0, tfow, menu_height = 40, speeed = 20, c_level_score,c_size;
+        private double grad;
         public string name;
-        
-        Cube testing = new Cube();
-     
-        public Form1()
-        {
-            InitializeComponent();
-        }
+        private Cube testing = new Cube();
+
+        public Form1(){InitializeComponent();}
 
         #region "GUI"
-        string[] menus = new string[] { "Scores", "Play", "Help" }, instr = new string[] {
+        string[] menus = new string[] { "Scores", "Play", "Help" }, //Menus
+            instr = new string[] {
             "Use mouse to move triangle.",
             "Left click shot, Right navigate back to main menu.",
+            "Press Space to pause the game",
             "Shoot circles to navigate.",
             "Shoot cubes to get points.",
             "Catch bonus to get x5 triple shots.",
             "Cubes should not reach you.",
-            "Have fun"};
+            "Have fun"};//help menu text
         private void Form1_Load(object sender, EventArgs e)
         {
-            trinity.name = name;
+            trinity.name = name;//sets username
             #region "ch"
+            //Cheat part
             if (new string[] { "ChuckNorris", "chucknorris", "Chuck Norris" }.Contains(trinity.name))
             {
                 trinity.bonus = 32767;
@@ -50,23 +68,29 @@ namespace LSD
             }
             #endregion
             #region "Fullscreen"
+            //Full screen setup
             this.FormBorderStyle = FormBorderStyle.None;//Form Has no borders
             this.Location = Screen.PrimaryScreen.WorkingArea.Location;//Full screen
             this.Size = Screen.PrimaryScreen.WorkingArea.Size;//Position of windows(fullscreen fix)
             #endregion
-            c_size = Convert.ToInt16((((this.Height - menu_height) * 0.1)/2));
-            trinity.delta_coord =  new Point(this.Width - trinity.trioRec.Width - 10, trinity.delta_coord.Y);//position player.
-            grad = (short)((((this.Height - menu_height) / 2) / (decimal)this.Width) * 100000); //gradient
-            this.KeyDown += new KeyEventHandler(keypress);
-            this.FormClosed += new FormClosedEventHandler(formclosed);
+            #region "Calculations"
+            c_size = Convert.ToInt16((((this.Height - menu_height) * 0.1)/2));//5% of screen size
+            grad = (short)((((this.Height - menu_height) / 2) / (decimal)this.Width) * 100000); //gradient of 50%height
+            tfow = (short)((this.Width / 5) * 3);//Three Fifth of Width
+            main_radius = (Int16)((this.Height - menu_height) / 2);
+            #endregion
+            this.KeyDown += new KeyEventHandler(keypress);//handler for keydown
+            this.FormClosed += new FormClosedEventHandler(formclosed);//handler for form close. Bug fix, with closing form but not app
             #region "close_button"
+            //setting closing button in the right top corner
             Label close_btn = new Label { Name = "close_button", Text = "X", Visible = true, ForeColor = Color.White, Font = new Font(Font.FontFamily, 10), Location = new Point(this.Width - 15, 0) };
             this.Controls.Add(close_btn);
             close_btn.Click += new EventHandler(this.close_button);
             #endregion
-
             #region "GUI Init"
-            main_radius = (Int16)((this.Height - menu_height) / 2);
+            //Initializing GUI, and sets variables
+            trinity.delta_coord = new Point(this.Width - trinity.trioRec.Width - 10, trinity.delta_coord.Y);//position player.
+            
             for (short i = 0; i < 3; i++) { 
                 menus_ell[i] =  new Menu_Ell();
                 menus_ell[i].delta_txt = menus[Convert.ToInt32(i)];
@@ -79,21 +103,12 @@ namespace LSD
                 levels_ell[i].delta_loc = get_coords((short)(i + 1));
                 levels_ell[i].gen_colour(i);
             }
-            tfow = (short)((this.Width / 5) * 3);//Three Fifth of Width
             wt_draw = "menu"; 
             #endregion
         }
         private void formclosed(object sender, FormClosedEventArgs e) { Application.Exit(); } //If form closes, application closes too
-        public Point get_coords(short i)
-        {
-           return (
-               new Point(
-                (short)(((main_radius + 2 * circle_level_r) / 2 * Math.Cos((i * 1 * Math.PI + 2 * Math.PI) / 5)) + ((this.Width - menu_height - circle_level_r) / 2)),
-                (short)(((main_radius + 2 * circle_level_r) / 2 * Math.Sin((i * 1 * Math.PI + 2 * Math.PI) / 5)) + ((this.Height - menu_height - circle_level_r) / 2))
-                )
-               );
-        }
-        private void close_button(object sender, System.EventArgs e) { if (MessageBox.Show("Are you sure?", "Exit LSD?", MessageBoxButtons.YesNo) == DialogResult.Yes) { Application.Exit(); } }//exit button
+        private void close_button(object sender, System.EventArgs e) { if (MessageBox.Show("Are you sure?", "Exit LSD?", MessageBoxButtons.YesNo) == DialogResult.Yes) { Scores_RW.write(trinity); Application.Exit(); } }//exit button
+       
         #endregion
         #region "Game Engine"
         #region "Mouse & Keyboard events"
@@ -145,36 +160,48 @@ namespace LSD
         private string wt_draw;
         private short rnd_colour_wait = 0,f_init_s, f_init_i = 3, f_init_n; //f_init_* set of variables for pauses and so on. Shared by multiple functions
         private bool fiasko = false;
+        private Point get_coords(short i)
+        {
+            return (
+                new Point(
+                 (short)(((main_radius + 2 * circle_level_r) / 2 * Math.Cos((i * 1 * Math.PI + 2 * Math.PI) / 5)) + ((this.Width - menu_height - circle_level_r) / 2)),
+                 (short)(((main_radius + 2 * circle_level_r) / 2 * Math.Sin((i * 1 * Math.PI + 2 * Math.PI) / 5)) + ((this.Height - menu_height - circle_level_r) / 2))
+                 )
+                );
+        }
         private void tmrShoot_Tick(object sender, EventArgs e) { this.Invalidate(); }  
+
         #endregion
 
         private void game_init(short level)
         {
-            squares.Clear();
+            squares.Clear();//Clear Cube arrat
             pad = 10;//Theoretical minimus padding
-            npr = (short)((this.Height - menu_height - pad) / (testing.gamma_cube_rec.Height + pad));//maximum squares per row y = n(h+p) + p
-            pad_real = (short)((this.Height - menu_height - npr * testing.gamma_cube_rec.Height) / npr);//real padding
-            ncr = (short)((Program.GetRandomNumber(1, 3) * (this.Width * 0.01 * (this.Height - menu_height) * 0.01) * (0.15 + trinity.lieben / 10) * level));//Setting up hardness, depends on screen size and level
+            mnpr = (short)((this.Height - menu_height - pad) / (testing.rec.Height + pad));//maximum squares per row y = n(h+p) + p
+            pad_real = (short)((this.Height - menu_height - mnpr * testing.rec.Height) / mnpr);//real padding
+            lcn = (short)((this.Width * 0.01 * (this.Height - menu_height) * 0.01) * (0.10 + (trinity.lieben)/10) * level * 2);
+            //Setting up hardness, depends on screen size and level
+
             short row = 0, nrow = 0;
             bool up = true;
             trinity.lieben += 2;
-            for (short i = 0; i < ncr; i++)
+            for (short i = 0; i < lcn; i++)
             {
                 squares.Add(new Cube());
 
             }
             foreach (Cube cu in squares)
             {
-                if (Program.GetRandomNumber(1, 30) == 1)
+                if (Program.rand_num(1, 30) == 1)
                 {
                     cu.delta_bonus = true;
                 }
                 if (up)
                 {
-                    cu.delta_loc = new Point(65 * row, cu.delta_loc.Y - (nrow * (cu.gamma_cube_rec.Height + pad_real)));
+                    cu.delta_loc = new Point(65 * row, cu.delta_loc.Y - (nrow * (cu.rec.Height + pad_real)));
                     cu.delta_up = up;
                     nrow++;
-                    if (nrow >= npr)
+                    if (nrow >= mnpr)
                     {
                         nrow = 0;
                         up = false;
@@ -183,10 +210,10 @@ namespace LSD
                 }
                 else
                 {
-                    cu.delta_loc = new Point(65 * row, cu.delta_loc.Y + (nrow * (cu.gamma_cube_rec.Height + pad_real)));
+                    cu.delta_loc = new Point(65 * row, cu.delta_loc.Y + (nrow * (cu.rec.Height + pad_real)));
                     cu.delta_up = up;
                     nrow++;
-                    if (nrow >= npr)
+                    if (nrow >= mnpr)
                     {
                         nrow = 0;
                         up = true;
@@ -198,16 +225,15 @@ namespace LSD
             wt_draw = "init";
             this.Invalidate();
         }
+
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            bool a_visibles = false;
-            g = e.Graphics;
-            #region "DEbug"
-
-            #endregion
-            switch (wt_draw)
+            bool a_visibles = false;//Is there any vbisible cube
+            g = e.Graphics;//Graphics
+            switch (wt_draw)//Switch for what to draw
             {
                 #region "Drawing_GUI"
+                    //Gui part
                 #region "Menu"
                 case "menu":
                     for (short i = 0; i < 3; i++)
@@ -217,7 +243,7 @@ namespace LSD
                         menus_ell[Convert.ToInt32(i)].menu_draw(g);
                         foreach (Missile m in missiles)
                         {
-                            if (m.MissileRec.IntersectsWith(menus_ell[i].gamma_menu_elips))
+                            if (m.rec.IntersectsWith(menus_ell[i].rec))
                             {
                                 wt_draw = menus[Convert.ToInt32(i)].ToLower();
                                 f_init_s = 0;
@@ -238,7 +264,7 @@ namespace LSD
                         levels_ell[i].menu_draw(g);
                         foreach (Missile m in missiles)
                         {
-                            if (m.MissileRec.IntersectsWith(levels_ell[i].gamma_menu_elips))
+                            if (m.rec.IntersectsWith(levels_ell[i].rec))
                             {
                                 game_init((short)(i + 1));
                                 missiles.Remove(m);
@@ -368,7 +394,7 @@ namespace LSD
                 #endregion
                 #region "Scores"
                 case "scores":
-
+                    
                     SortedDictionary<short, string> local_scores = Scores_RW.read();
                     string draw_scores = "";
                     short index = 0;
@@ -379,10 +405,10 @@ namespace LSD
                             
                             f_init_i++;
                             draw_scores = index + 1 + " : " + item.ToString().Replace("[", "").Replace("]", "").Replace(",", " ") + "\n";
-                            g.DrawString(draw_scores, new Font("Arial", 18), new SolidBrush(Color.FromArgb(255, Program.GetRandomNumber(0, 255), Program.GetRandomNumber(0, 255), Program.GetRandomNumber(0, 255))),
-                         20 + 170*index ,
-                         (short)((((this.Height - c_size) - (menu_height + c_size)) / 2) *  (double)Math.Sin(((2 * Math.PI) / 170) * (20 + 150 * index + (f_init_i/13))) + (((this.Height - c_size) + (menu_height + c_size)) / 2)),
-                         new StringFormat()); //Drawing user score.
+                            g.DrawString(draw_scores, new Font("Arial", 18), new SolidBrush(Color.FromArgb(255, Program.rand_num(0, 255), Program.rand_num(0, 255), Program.rand_num(0, 255))),
+                                20 + 170*index ,
+                                (short)((((this.Height - c_size) - (menu_height + c_size)) / 2) *  (double)Math.Sin(((2 * Math.PI) / 170) * (20 + 150 * index + (f_init_i/13))) + (((this.Height - c_size) + (menu_height + c_size)) / 2)),
+                                new StringFormat()); //Drawing user score.
                             index++;
                         }  
                     }
@@ -416,11 +442,11 @@ namespace LSD
                                 {
                                     if (!fiasko)
                                     {
-                                        if (m.MissileRec.IntersectsWith(cu.gamma_cube_rec))
+                                        if (m.rec.IntersectsWith(cu.rec))
                                         {
                                             if (cu.delta_bonus)
                                             {
-                                                bonus.Add(new Bonus(cu.gamma_cube_rec));
+                                                bonus.Add(new Bonus(cu.rec));
                                             }
                                             trinity.score++;
                                             c_level_score++;
@@ -462,7 +488,7 @@ namespace LSD
                                 {
                                     cu.delta_loc = new Point(cu.delta_loc.X, cu.delta_loc.Y + speeed);
 
-                                    if (cu.delta_loc.Y + cu.gamma_cube_rec.Height >= this.Height)
+                                    if (cu.delta_loc.Y + cu.rec.Height >= this.Height)
                                     {
                                         cu.delta_loc = new Point(cu.delta_loc.X + 65, cu.delta_loc.Y);
                                         cu.delta_up = true;
@@ -493,7 +519,7 @@ namespace LSD
 
                 #endregion
             }
-            trinity.trinity_draw(g);//Drawind user
+            trinity.draw(g);//Drawind user
             #region "Upper Menu"
             g.DrawLine(new Pen(new SolidBrush(Color.White),3F), new Point(0, menu_height - 7), new Point(this.Width, menu_height - 7));//Drawind menu line
             g.DrawString(trinity.name + " : " + Convert.ToString(trinity.score).PadLeft(5, '0') + "   ☥x " + trinity.lieben + "   ♆x " + trinity.bonus, 
@@ -508,14 +534,14 @@ namespace LSD
                 {
                     b.draw(g);
                 }
-                if (b.MissileRec.IntersectsWith(trinity.trioRec)) {
+                if (b.rec.IntersectsWith(trinity.trioRec)) {
                     trinity.bonus += 5;
                     trinity.score += 2;
                     c_level_score += 2;
                     bonus.Remove(b);
                     break;
                 }
-                if (b.MissileRec.X <= 0)
+                if (b.rec.X <= 0)
                 {
                     bonus.Remove(b);
                     break;
@@ -545,7 +571,7 @@ namespace LSD
                     }
                 }
                 #endregion
-                if (m.MissileRec.X <= 0)
+                if (m.rec.X <= 0)
                 {
                     missiles.Remove(m);
                     break;
@@ -556,8 +582,6 @@ namespace LSD
         }
 
         #endregion
-
-        #region "DEBUG AND DEV"
 
         #region "OLD CODE"
         /* public Point get_coords(double i)
@@ -611,8 +635,6 @@ namespace LSD
                         (short)((circle_level_r / 2) * Math.Sqrt(2)),
                         (short)((circle_level_r / 2) * Math.Sqrt(2)));
          */
-
-        #endregion
 
         #endregion
 

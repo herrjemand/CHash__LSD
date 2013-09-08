@@ -6,34 +6,37 @@ using System.Drawing;
 using System.Diagnostics;
 namespace LSD
 {
-    class Bonus
+    class Bonus//Bonus class
     {
-        short a;
-        Color colour;
-        private Rectangle missileRec;//variable for a rectangle to place our image in
+        short a;//Bonus size
+        Color colour;//Colour container
+        private Rectangle BonusRec;//variable for a rectangle to place our image in
 
-        public Bonus(Rectangle incoRec)
+        public Bonus(Rectangle ParentRec)//Gets rec of bonus cube
         {
-            a = 45;
-            colour = Color.FromArgb(255, Program.GetRandomNumber(0, 255), Program.GetRandomNumber(0, 255), Program.GetRandomNumber(0, 255));
-            missileRec = new Rectangle(incoRec.X, incoRec.Y, a, a);
+            a = 45;//triangle size
+            BonusRec = new Rectangle(ParentRec.X, ParentRec.Y, a, a);//sets rectangle
             gen_colour();
         }
-        public void draw(Graphics g)
+        public void draw(Graphics g)//drawing
         {
-           
-            missileRec = new Rectangle(missileRec.X + 2, missileRec.Y, a, a);
-            g.DrawPolygon(new Pen(colour), new Point[] { new Point(missileRec.X + a / 2, missileRec.Y), new Point(missileRec.X, missileRec.Y + a), new Point(missileRec.X + a, missileRec.Y + a) });
-            g.DrawString("♆", new Font("Arial", 24), new SolidBrush(Color.White), missileRec.X - 2, missileRec.Y + a / 5, new StringFormat());
+            BonusRec = new Rectangle(BonusRec.X + 2, BonusRec.Y, a, a);//sets rectangle
+            g.DrawPolygon(new Pen(colour), 
+                new Point[] { new Point(BonusRec.X + a / 2, BonusRec.Y), 
+                    new Point(BonusRec.X, BonusRec.Y + a), 
+                    new Point(BonusRec.X + a, BonusRec.Y + a) 
+                });//Drawing triangle
+            g.DrawString("♆", new Font("Arial", 24), new SolidBrush(Color.White), BonusRec.X - 2, BonusRec.Y + a / 5, new StringFormat());//drawing icon inside
         }
-        public void gen_colour() {
+
+        public void gen_colour() {//gets random colour
             colour = Program.rand_colour();
         }
-        public Rectangle MissileRec
+        public Rectangle rec
         {
             get
             {
-                return missileRec;
+                return BonusRec;
             }
         }
     }

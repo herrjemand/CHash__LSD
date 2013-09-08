@@ -8,26 +8,24 @@ namespace LSD
 {
     class Triangle
     {
-         private short width, height,bonus_shots,lifes,points;//variables for the rectangle
-         private Point coord;
-         private string user_name = "Yuriy";//DEBUG
+         private short a,bonus_shots,lifes,points;//size of triangle,emount of bonus shots,amount of lifes(not more then 10),point;
+         private Point coord;//location
+         private string user_name;//username hoslder
 
-        //private Image spaceship;//variable for the spaceship's image
-
-        private Rectangle trinityRec;//variable for a rectangle to place our image in
+        private Rectangle trinityRec;//Rectangle
        
-        //Create a constructor (initialises the values of the fields)
-        public Triangle()
+        public Triangle()//default configs
         {
-            width = 60;
-            height = 60;
+            a = 60;
             lifes = 3;
-            trinityRec = new Rectangle(coord.X, coord.Y, width, height);
+            trinityRec = new Rectangle(coord.X, coord.Y, a, a);
         }
-        public void trinity_draw(Graphics g)
+        public void draw(Graphics g)//drawing function
         {
-            trinityRec = new Rectangle(coord.X, coord.Y, width, height);
-            g.FillPolygon(Brushes.Purple, new Point[] { new Point(coord.X, coord.Y + trinityRec.Height / 2), new Point(coord.X + trinityRec.Width, coord.Y), new Point(coord.X + trinityRec.Width, coord.Y + trinityRec.Height) });
+            trinityRec = new Rectangle(coord.X, coord.Y, a, a);//sets rectangle 
+            g.FillPolygon(Brushes.Purple, new Point[] { new Point(coord.X, coord.Y + trinityRec.Height / 2),
+                new Point(coord.X + trinityRec.Width, coord.Y),
+                new Point(coord.X + trinityRec.Width, coord.Y + trinityRec.Height) }); //drawing user triangle
         }
 
          public Rectangle trioRec

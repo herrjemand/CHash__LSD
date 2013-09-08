@@ -8,34 +8,35 @@ namespace LSD
 {
     class Menu_Ell
     {
-        // declare fields to use in the class
-        private short rad, f_size;//variables for the rectangle
-        private string txxt;
-        private Point loc;
-        private Rectangle MenuRec;
-        private Color colour = Color.White;
+        private short rad, f_size;//Radius and font size
+        private string txxt;//txt holder
+        private Point loc;//position
+        private Rectangle MenuRec;//rectangle
+        private Color colour;//colour holder
 
-        public Menu_Ell()
+        public Menu_Ell()//default setups
         {
-            #region "default configs"
             loc = new Point(10, 10);
             rad = 150;
             f_size = 35;
             MenuRec = new Rectangle(loc.X, loc.Y, rad, rad);
-            #endregion
         }
-
-        // Methods for the Planet class
         public void menu_draw(Graphics g)
         {
-            MenuRec = new Rectangle(loc.X, loc.Y, rad, rad);
-            g.DrawEllipse(new Pen(colour, 4F), loc.X, loc.Y, rad, rad);
-            g.DrawString(txxt, new Font("Arial", f_size), new SolidBrush(Color.White), loc.X + rad / 2, loc.Y + rad / 2, new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center });
+            MenuRec = new Rectangle(loc.X, loc.Y, rad, rad);//sets rectangle
+            g.DrawEllipse(new Pen(colour, 4F), loc.X, loc.Y, rad, rad);//draw circle
+            g.DrawString(txxt, new Font("Arial", f_size), new SolidBrush(Color.White), 
+                loc.X + rad / 2, 
+                loc.Y + rad / 2, 
+                new StringFormat() {
+                    LineAlignment = StringAlignment.Center, 
+                    Alignment = StringAlignment.Center 
+                });//draw text
         }
-        public void gen_colour(short i) {
+        public void gen_colour(short i) {//generates colour green -> red
            colour = Color.FromArgb(255, 51 * i, 255 - 51 * i, 0);
         }
-        public void rnd_colour(){
+        public void rnd_colour(){//gets random colour
             colour = Program.rand_colour();
         }
         #region Delta
@@ -67,9 +68,7 @@ namespace LSD
                 f_size = value;
             }
         }
-        #endregion
-        #region Gamma
-        public Rectangle gamma_menu_elips{
+        public Rectangle rec{
             get{
                 return MenuRec;
             }

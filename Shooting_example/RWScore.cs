@@ -6,11 +6,12 @@ using System.IO;
 using System.Collections;
 namespace LSD
 {
-    static class Scores_RW
+    static class Scores_RW//scores read write
     {
-        private static string file_name = "scores.csv", file_address = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\LSD\";
+        private static string file_name = "scores.csv", 
+            file_address = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\LSD\";//file name, and location
         private static SortedDictionary<short, string> scores_list = new SortedDictionary<short, string>();
-        public static void existance()
+        public static void existance() //check existance, and if not create folder and file in MyDocuments folder
         {
             if (!Directory.Exists(file_address))
             {
@@ -25,7 +26,7 @@ namespace LSD
                 }
             }
         }
-        public static SortedDictionary<short, string> read()
+        public static SortedDictionary<short, string> read() //read file and return sorted dictionary
         {
             existance();
             scores_list.Clear();
@@ -41,8 +42,8 @@ namespace LSD
                 sr.Close();
             }
             return scores_list;
-    }
-        public static void write(Triangle trin) {
+        }
+        public static void write(Triangle trin) {//if user score is not 0, hten itr writes all scores to file in CSV format
             if (trin.score != 0)
             {
                 SortedDictionary<short, string> local_scores = read();
