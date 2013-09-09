@@ -30,33 +30,37 @@ namespace LSD
         {
             existance();
             scores_list.Clear();
-            if (new FileInfo(file_address + file_name).Length != 0)
-            {
-                StreamReader sr = new StreamReader(File.OpenRead(file_address + file_name));
-                string[] row = new string[2];
-                while (!sr.EndOfStream)
+            try{
+                if (new FileInfo(file_address + file_name).Length != 0)
                 {
-                    row = sr.ReadLine().Split(',');
-                    scores_list.Add(Convert.ToInt16(row[0]), row[1]);
+                    StreamReader sr = new StreamReader(File.OpenRead(file_address + file_name));
+                    string[] row = new string[2];
+                    while (!sr.EndOfStream)
+                    {
+                        row = sr.ReadLine().Split(',');
+                        scores_list.Add(Convert.ToInt16(row[0]), row[1]);
+                    }
+                    sr.Close();
                 }
-                sr.Close();
-            }
+            }catch{}
             return scores_list;
         }
         public static void write(Triangle trin) {//if user score is not 0, hten itr writes all scores to file in CSV format
             if (trin.score != 0)
             {
-                SortedDictionary<short, string> local_scores = read();
-                string x = "";
-                if (new FileInfo(file_address + file_name).Length != 0)
-                {
-                    foreach (KeyValuePair<short, string> item in local_scores)
+                try{
+                    SortedDictionary<short, string> local_scores = read();
+                    string x = "";
+                    if (new FileInfo(file_address + file_name).Length != 0)
                     {
-                        x += item.ToString().Replace(" ", "").Replace("[", "").Replace("]", "") + "\n";
+                        foreach (KeyValuePair<short, string> item in local_scores)
+                        {
+                            x += item.ToString().Replace(" ", "").Replace("[", "").Replace("]", "") + "\n";
+                        }
                     }
-                }
-                x += trin.score + "," + trin.name.Replace(" ", "") + "\n";
-                File.WriteAllText(file_address + file_name, x, Encoding.UTF8);
+                    x += trin.score + "," + trin.name.Replace(" ", "") + "\n";
+                    File.WriteAllText(file_address + file_name, x, Encoding.UTF8);
+                }catch{}
             }
         }
     }
