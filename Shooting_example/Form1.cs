@@ -186,7 +186,7 @@ namespace LSD
 
             short row = 0, nrow = 0;
             bool up = true;
-            trinity.lieben += 2;
+            trinity.lieben += 2;//add 2 lifes every round. Max is 10
             for (short i = 0; i < lcn; i++)
             {
                 squares.Add(new Cube());
@@ -194,7 +194,7 @@ namespace LSD
             }
             foreach (Cube cu in squares)
             {
-                if (Program.rand_num(1, 30) == 1)
+                if (Program.rand_num((1 + level), 30) == 10)
                 {
                     cu.delta_bonus = true;
                 }
@@ -402,7 +402,7 @@ namespace LSD
                     short index = 0;
                     if (local_scores.Count != 0)
                     {
-                        foreach (KeyValuePair<short, string> item in local_scores)
+                        foreach (KeyValuePair<short, string> item in local_scores.Reverse())
                         {
                             
                             f_init_i++;
@@ -510,6 +510,7 @@ namespace LSD
                         f_init_i = 0; f_init_s = 0; f_init_n = 0;
                         if (trinity.lieben == 0)
                         {
+                            trinity.score -= c_level_score;
                             wt_draw = "defeat";
                         }
                         else {
