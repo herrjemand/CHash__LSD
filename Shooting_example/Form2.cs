@@ -39,7 +39,7 @@ namespace LSD
         }
         private void textBox2_KeyPress(object sender, KeyPressEventArgs e)//checks for incorrect symbols. Only letters,numbers,backspace and space
         {
-            e.Handled = !(char.IsLetter(e.KeyChar) || char.IsNumber(e.KeyChar) || e.KeyChar == (char)Keys.Back || e.KeyChar == (char)Keys.Space);
+            e.Handled = !(char.IsLetter(e.KeyChar) || e.KeyChar == (char)Keys.Back || e.KeyChar == (char)Keys.Space);
         }
 
         private void timer1_Tick(object sender, EventArgs e)//animation for LSD sign
