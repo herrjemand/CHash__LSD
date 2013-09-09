@@ -49,13 +49,15 @@ namespace LSD
         string[] menus = new string[] { "Scores", "Play", "Help" }, //Menus
             instr = new string[] {
             "Use mouse to move triangle.",
-            "Left click shot, Right navigate back to main menu.",
+            "Left click shot.", 
+            "Right click to navigate back to main menu.",
             "Press Space to pause the game",
             "Shoot circles to navigate.",
             "Shoot cubes to get points.",
             "Catch bonus to get x5 triple shots.",
             "Cubes should not reach you.",
             "Have fun"};//help menu text
+            
         private void Form1_Load(object sender, EventArgs e)
         {
             trinity.name = name;//sets username
