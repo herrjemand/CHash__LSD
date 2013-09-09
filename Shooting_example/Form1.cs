@@ -194,7 +194,7 @@ namespace LSD
             }
             foreach (Cube cu in squares)
             {
-                if (Program.rand_num((1 + level), 30) == 10)
+                if (Program.rand_num((1 + level), 30)  == 10)
                 {
                     cu.delta_bonus = true;
                 }
@@ -504,7 +504,6 @@ namespace LSD
                     }
                     #region "Round finish"
                     if (!a_visibles) {
-                        //missiles.Clear();
                         squares.Clear();
                         bonus.Clear();
                         f_init_i = 0; f_init_s = 0; f_init_n = 0;
@@ -533,10 +532,7 @@ namespace LSD
             #region "Bonus"
             foreach (Bonus b in bonus) {
                 b.gen_colour();
-                for (short i = 0; i < 20; i++)
-                {
                     b.draw(g);
-                }
                 if (b.rec.IntersectsWith(trinity.trioRec)) {
                     trinity.bonus += 5;
                     trinity.score += 2;
