@@ -63,7 +63,7 @@ namespace LSD
             //Cheat part
             if (new string[] { "ChuckNorris", "chucknorris", "Chuck Norris" }.Contains(trinity.name))
             {
-                trinity.bonus = 32767;
+                trinity.bonus = 32000;
                 trinity.name = "☠☠☠";
             }
             #endregion
