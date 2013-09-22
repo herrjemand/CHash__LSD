@@ -6,12 +6,15 @@ using System.IO;
 using System.Collections;
 namespace LSD
 {
-    static class Scores_RW//scores read write
+    static class csv//scores read write
     {
-        private static string file_name = "scores.csv", 
-            file_address = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\LSD\";//file name, and location
+        private static string file_name = "scores.csv", //File name
+            file_address = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) 
+            + @"\"
+            + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name //Application Name; Edit in properties
+            +  @"\"; //File location
         private static SortedDictionary<short, string> scores_list = new SortedDictionary<short, string>();
-        public static void existance() //check existance, and if not create folder and file in MyDocuments folder
+        public static void check() //check existance, and if not create folder and file in MyDocuments folder
         {
             if (!Directory.Exists(file_address))
             {
@@ -26,9 +29,10 @@ namespace LSD
                 }
             }
         }
+
         public static SortedDictionary<short, string> read() //read file and return sorted dictionary
         {
-            existance();
+            check();
             scores_list.Clear();
             try{
                 if (new FileInfo(file_address + file_name).Length != 0)
@@ -42,11 +46,13 @@ namespace LSD
                     }
                     sr.Close();
                 }
-            }catch{}
+            }
+            catch (Exception e) { Console.WriteLine("{0} Exception caught.", e); }
             return scores_list;
         }
-        public static void write(Triangle trin) {//if user score is not 0, hten itr writes all scores to file in CSV format
-            if (trin.score != 0)
+
+        public static void write(string name, short score) {//if user score is not 0, hten itr writes all scores to file in CSV format
+            if (score != 0)
             {
                 try{
                     SortedDictionary<short, string> local_scores = read();
@@ -58,9 +64,11 @@ namespace LSD
                             x += item.ToString().Replace(" ", "").Replace("[", "").Replace("]", "") + "\n";
                         }
                     }
-                    x += trin.score + "," + trin.name.Replace(" ", "") + "\n";
+                    x += score + "," + name + "\n";
                     File.WriteAllText(file_address + file_name, x, Encoding.UTF8);
-                }catch{}
+                    Console.WriteLine("Score was written successfully!");
+                }
+                catch (Exception e) { Console.WriteLine("{0} Exception caught.", e); }
             }
         }
     }

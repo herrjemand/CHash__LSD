@@ -18,7 +18,7 @@ namespace LSD
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            Scores_RW.existance();//check if scores file exits and creates it if not
+            csv.check();//check if scores file exits and creates it if not
             this.CenterToScreen();//setf form to center of screen
             textBox2.KeyPress += new KeyPressEventHandler(textBox2_KeyPress);//add handler for keypress in textbox
             /*Sets handlers for key down for form,textbox and panel*/

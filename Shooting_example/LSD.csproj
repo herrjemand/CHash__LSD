@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bonus.cs" />
-    <Compile Include="RWScore.cs" />
+    <Compile Include="csv.cs" />
     <Compile Include="Form2.cs">
       <SubType>Form</SubType>
     </Compile>

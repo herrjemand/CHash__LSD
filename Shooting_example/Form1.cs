@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Drawing.Drawing2D;
 
 namespace LSD
 {
@@ -56,7 +55,7 @@ namespace LSD
             "Shoot cubes to get points.",
             "Catch bonus to get x5 triple shots.",
             "Cubes should not reach you.",
-            "Have fun"};//help menu text
+            "Have fun."};//help menu text
             
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -109,7 +108,7 @@ namespace LSD
             #endregion
         }
         private void formclosed(object sender, FormClosedEventArgs e) { Application.Exit(); } //If form closes, application closes too
-        private void close_button(object sender, System.EventArgs e) { if (MessageBox.Show("Are you sure?", "Exit LSD?", MessageBoxButtons.YesNo) == DialogResult.Yes) { Scores_RW.write(trinity); Application.Exit(); } }//exit button
+        private void close_button(object sender, System.EventArgs e) { if (MessageBox.Show("Are you sure?", "Exit LSD?", MessageBoxButtons.YesNo) == DialogResult.Yes) { csv.write(trinity.name,trinity.score); Application.Exit(); } }//exit button
        
         #endregion
         #region "Game Engine"
@@ -162,6 +161,7 @@ namespace LSD
         private string wt_draw;
         private short rnd_colour_wait = 0,f_init_s, f_init_i = 3, f_init_n; //f_init_* set of variables for pauses and so on. Shared by multiple functions
         private bool fiasko = false;
+        SortedDictionary<short, string> local_scores = new SortedDictionary<short, string>();
         private Point get_coords(short i)
         {
             return (
@@ -234,8 +234,7 @@ namespace LSD
             g = e.Graphics;//Graphics
             switch (wt_draw)//Switch for what to draw
             {
-                #region "Drawing_GUI"
-                    //Gui part
+                #region "Drawing_GUI" 
                 #region "Menu"
                 case "menu":
                     for (short i = 0; i < 3; i++)
@@ -350,54 +349,46 @@ namespace LSD
                 #endregion
                 #region "Defeat"
                 case "defeat":
-                    if (f_init_n < 400)
-                    {
-                        f_init_n += 5;
-                    }
-                    if (f_init_s < 250)
-                     {
-                        f_init_s += 5;
-                     }
+                    if (f_init_n < 400){f_init_n += 5;}
+                    if (f_init_s < 250) { f_init_s += 5; }
                      g.DrawString("Defeat!\n", new Font("Arial", 86), new SolidBrush(Color.FromArgb(f_init_s, 255, 0, 0)),
                      this.Width / 2, (this.Height - menu_height) / 2, new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center }); //Drawing user score.
+                    if(f_init_n > 395){
 
-                    
-                    if(f_init_n > 395)
-                    {
-                        if (f_init_n < 1200)
-                        {
+                        if (f_init_n < 1200){
                             f_init_n += 5;
-                        }
-                        else {
+                        }else {
+
                             if (trinity.score != 0)
                             {
-                                Scores_RW.write(trinity);
+                               csv.write(trinity.name,trinity.score);
                             }
-                            f_init_s = 0; 
-                            f_init_n = 0; 
-                            f_init_i = 0; 
+                            f_init_s = f_init_n = f_init_i = trinity.score = 0;  
                             wt_draw = "scores"; 
                             trinity.lieben = 3;
-                            trinity.score = 0; 
                             fiasko = false;
                             speeed = 20;
                         }
 
-                        if (f_init_i < 250)
-                        {
-                            f_init_i += 5;
-                        }
+                        if (f_init_i < 250){f_init_i += 5;}
                         short disp_y = Convert.ToInt16(g.MeasureString("Defeat!\n", new Font("Arial", 86)).Height);
-                        g.DrawString("Your score " + trinity.score, new Font("Arial", 75), new SolidBrush(Color.FromArgb(f_init_i, 255, 0, 0)),
-                           this.Width / 2, ((this.Height - menu_height) / 2) + disp_y/2, new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center }); //Drawing user score.
+                        g.DrawString("Your score " + trinity.score,
+                            new Font("Arial", 75), //Font
+                            new SolidBrush(Color.FromArgb(f_init_i, 255, 0, 0)),//Colour
+                           this.Width / 2, ((this.Height - menu_height) / 2) + disp_y/2, //Location
+                           new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center //Position
+                           }); //Drawing user score.
                     }
 
                     break;
                 #endregion
                 #region "Scores"
                 case "scores":
-                    
-                    SortedDictionary<short, string> local_scores = Scores_RW.read();
+                    if (f_init_n != 239)
+                    {
+                        local_scores = csv.read();
+                        f_init_n = 239;
+                    }
                     string draw_scores = "";
                     short index = 0;
                     if (local_scores.Count != 0)
