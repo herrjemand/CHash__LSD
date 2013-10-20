@@ -431,9 +431,9 @@ namespace LSD
                             {
                                 a_visibles = true;
                                 #region "Missiles"
-                                foreach (Missile m in missiles)
+                                if (!fiasko)
                                 {
-                                    if (!fiasko)
+                                    foreach (Missile m in missiles)
                                     {
                                         if (m.rec.IntersectsWith(cu.rec))
                                         {
