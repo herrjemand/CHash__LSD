@@ -61,7 +61,7 @@ namespace LSD
                     {
                         foreach (KeyValuePair<short, string> item in local_scores)
                         {
-                            x += item.ToString().Replace(" ", "").Replace("[", "").Replace("]", "") + "\n";
+                            x += item.Key.ToString() + "," + item.Value.ToString() + "\n";
                         }
                     }
                     x += score + "," + name + "\n";
